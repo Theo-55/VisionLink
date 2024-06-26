@@ -8,10 +8,6 @@ const props = defineProps({
         required: true,
     },
 });
-
-onMounted(() => {
-    console.log(props.points);
-});
 </script>
 <template>
     <div class="flex justify-center">
@@ -23,7 +19,7 @@ onMounted(() => {
             </h1>
             <div class="flex justify-start">
                 <Link
-                    class="h-full pt-1 pb-1 text-white bg-orange-500 hover:bg-orange-600 px-4 rounded"
+                    class="h-full pt-2 pb-1 text-white bg-orange-500 hover:bg-orange-600 px-4 rounded"
                     href="/points/create"
                     >+</Link
                 >

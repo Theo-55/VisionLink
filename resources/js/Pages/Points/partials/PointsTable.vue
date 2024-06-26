@@ -16,7 +16,7 @@ const props = defineProps({
 });
 
 const showPoint = (id) => {
-    window.location.href = `/software/show/${id}`;
+    window.location.href = `/points/show/${id}`;
 };
 </script>
 <template>
@@ -39,9 +39,10 @@ const showPoint = (id) => {
                         </thead>
                         <tbody class="text-center border-2">
                             <tr
-                                class="bg-white border-b transition duration-300 ease-in-out"
+                                class="bg-white border-b transition duration-300 ease-in-out cursor-points hover:bg-gray-300"
                                 v-for="point in points"
                                 :key="point"
+                                @click="showPoint(point.id)"
                             >
                                 <td
                                     class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900"

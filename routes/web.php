@@ -14,6 +14,10 @@ Route::get('/', function () {
 Route::group(['prefix' => 'points'], function () {
     Route::get('/index', [PointController::class, 'index']);
     Route::get('/create', [PointController::class, 'create']);
+    Route::post('/save', [PointController::class, 'store']);
+    Route::get('/show/{id}', [PointController::class, 'edit']);
+    Route::delete('/delete/{id}', [PointController::class, 'destroy']);
+    Route::put('/update', [PointController::class, 'update']);
 });
 
 Route::get('/dashboard', function () {
