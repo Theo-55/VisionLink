@@ -3,7 +3,9 @@ import { ref, reactive, computed, watch } from "vue";
 import InputLabel from "@/Components/InputLabel.vue";
 import TextInput from "@/Components/TextInput.vue";
 import Notification from "@/Components/Notification.vue";
-import { router } from "@inertiajs/vue3";
+import { router, Link } from "@inertiajs/vue3";
+import { useVuelidate } from "@vuelidate/core";
+import { required, numeric, minValue } from "@vuelidate/validators";
 
 const notification = ref(null);
 
@@ -18,13 +20,21 @@ const props = defineProps({
 
 const localCurrentPoint = ref({ ...props.currentPoint });
 
+const rules = {
+    name: { required },
+    x_val: { required, numeric, minValue: minValue(0) },
+    y_val: { required, numeric, minValue: minValue(0) },
+};
+
+const v$ = useVuelidate(rules, localCurrentPoint);
+
 const closestAndFarthestPoints = computed(() => {
     let points = props.otherPoints.filter(
-        (point) => point.id !== props.currentPoint.id
+        (point) => point.id !== localCurrentPoint.value.id
     );
     let distances = points.map((point) => {
-        let dx = point.x_val - props.currentPoint.x_val;
-        let dy = point.y_val - props.currentPoint.y_val;
+        let dx = point.x_val - localCurrentPoint.value.x_val;
+        let dy = point.y_val - localCurrentPoint.value.y_val;
         return {
             id: point.id,
             distance: Math.sqrt(dx * dx + dy * dy),
@@ -92,9 +102,19 @@ watch(
 
 <template>
     <div class="block justify-center items-center mt-20">
-        <h1 class="font-bold font-gothic text-2xl flex mb-3 p-3 justify-center">
-            Edit a Point
-        </h1>
+        <div class="flex justify-center">
+            <h1
+                class="font-bold font-gothic text-2xl flex mb-3 p-3 justify-center"
+            >
+                Edit a Point
+            </h1>
+            <Link
+                href="/points/index"
+                class="h-1/3 mt-2 ml-4 pt-1 pb-1 text-white bg-orange-500 hover:bg-orange-600 px-4 rounded"
+                >Go Back</Link
+            >
+        </div>
+
         <notification ref="notification" />
         <div class="flex justify-center">
             <form class="bg-gray-100 p-8 shadow-md rounded-md w-2/4">
@@ -111,6 +131,7 @@ watch(
                         class="form-control rounded-md h-9 w-2/4 mx-6"
                         required
                     />
+                    <div v-if="v$.name.$error">Please enter a Valid Name</div>
                 </div>
                 <div class="flex mb-4">
                     <InputLabel
@@ -125,6 +146,9 @@ watch(
                         class="form-control rounded-md h-9 w-2/4 mx-6"
                         required
                     />
+                    <div v-if="v$.x_val.$error">
+                        Please enter a valid number greater than 0 for x_val.
+                    </div>
                 </div>
                 <div class="flex mb-4">
                     <InputLabel
@@ -139,11 +163,68 @@ watch(
                         class="form-control rounded-md h-9 w-2/4 mx-6"
                         required
                     />
+                    <div v-if="v$.y_val.$error">
+                        Please enter a valid number greater than 0 for y_val.
+                    </div>
+                </div>
+                <div class="flex justify-center mt-6">
+                    <div class="bg-gray-100 p-8 shadow-md rounded-md w-2/4">
+                        <h2 class="font-bold text-xl mb-3">
+                            Closest and Farthest Points
+                        </h2>
+                        <div v-if="closestAndFarthestPoints.closestPoint">
+                            <h3 class="font-semibold">Closest Point:</h3>
+                            <p>
+                                Name:
+                                {{ closestAndFarthestPoints.closestPoint.name }}
+                            </p>
+                            <p>
+                                X Value:
+                                {{
+                                    closestAndFarthestPoints.closestPoint.x_val
+                                }}
+                            </p>
+                            <p>
+                                Y Value:
+                                {{
+                                    closestAndFarthestPoints.closestPoint.y_val
+                                }}
+                            </p>
+                        </div>
+                        <div
+                            v-if="closestAndFarthestPoints.farthestPoint"
+                            class="mt-4"
+                        >
+                            <h3 class="font-semibold">Farthest Point:</h3>
+                            <p>
+                                Name:
+                                {{
+                                    closestAndFarthestPoints.farthestPoint.name
+                                }}
+                            </p>
+                            <p>
+                                X Value:
+                                {{
+                                    closestAndFarthestPoints.farthestPoint.x_val
+                                }}
+                            </p>
+                            <p>
+                                Y Value:
+                                {{
+                                    closestAndFarthestPoints.farthestPoint.y_val
+                                }}
+                            </p>
+                        </div>
+                    </div>
                 </div>
                 <div class="flex justify-end mt-6">
                     <button
                         type="button"
                         class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-md mr-4"
+                        :class="{
+                            'bg-orange-500 hover:bg-orange-600': formChanged,
+                            'bg-gray-500 cursor-not-allowed': !formChanged,
+                        }"
                         @click="resetForm"
                     >
                         Reset

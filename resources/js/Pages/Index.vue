@@ -2,7 +2,11 @@
 // import PrimaryButton from '../Components/PrimaryButton.vue';
 import { Link } from "@inertiajs/vue3";
 
-
+const props = defineProps({
+    imageURL: {
+        required: false
+    }
+})
 const goToTable = () => {
     window.location.href('/table');
 }
@@ -10,10 +14,13 @@ const goToTable = () => {
 <template>
     <div class="max-w-md mr-auto ml-auto mt-20">
         <div class="flex-col items-center bg-gray-100 shadow-lg rounded-lg">
-            <div
-                class="bg-cover bg-center h-56 p-4"
-                :style="`background-image: url('${publicPath}');`"
-            ></div>
+            <div>
+                <img
+                    src="/images/VisionLink.jpeg"
+                    alt="Logo"
+                    class="h-full w-full"
+                />
+            </div>
             <div class="p-4 text-center">
                 <p
                     class="uppercase tracking-wide text-sm font-bold text-gray-700"

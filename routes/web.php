@@ -8,6 +8,7 @@ use App\Http\Controllers\PointController;
 
 Route::get('/', function () {
     return Inertia::render('Index', [
+        'imageURL' => asset('build/assets/images/VisionLink.jpeg')
     ]);
 });
 
