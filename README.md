@@ -11,7 +11,7 @@ Node Version >= 20.0
 PHP Version >= 8.0
 
 1. Clone repository to local device
-2. Composer install as well as node install
+2. Composer install as well as node install ``` composer install ``` ```npm install ```
 3. Setup local env file to match local setup, should only need your own db credentials
 4. If herd is successfully installed, you will need to add '.test' to the local APP_URL 
 5. Run ``` php artisan migrate:fresh --seed``` (may need to be re-run if duplicates are randomly created)
