@@ -192,7 +192,7 @@ watch(
                                     closestAndFarthestPoints.closestPoints
                                         .length > 1
                                 "
-                                class="text-red-400"
+                                class="text-red-500"
                             >
                                 These points have the same distance
                             </p>
