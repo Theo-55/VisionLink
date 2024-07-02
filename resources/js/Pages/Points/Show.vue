@@ -32,12 +32,22 @@ const closestAndFarthestPoints = computed(() => {
     let points = props.otherPoints.filter(
         (point) => point.id !== localCurrentPoint.value.id
     );
+
+    if (points.length === 0) {
+        return {
+            closestPoints: [],
+            farthestPoints: [],
+            closestDistance: null,
+            farthestDistance: null,
+        };
+    }
+
     let distances = points.map((point) => {
         let dx = point.x_val - localCurrentPoint.value.x_val;
         let dy = point.y_val - localCurrentPoint.value.y_val;
         return {
             ...point,
-            distance: Math.sqrt(dx * dx + dy * dy).toFixed(1),
+            distance: Math.sqrt(dx * dx + dy * dy),
         };
     });
     distances.sort((a, b) => a.distance - b.distance);
@@ -177,81 +187,95 @@ watch(
                         class="form-control rounded-md h-9 w-2/4 mx-6"
                         required
                     />
-                    <div v-if="v$.y_val.$error">
+                    <div v-if="v$.y_val.$error" class="text-red-500">
                         Please enter a valid number greater than 0 for y_val.
                     </div>
                 </div>
                 <div class="flex justify-center mt-6">
                     <div class="bg-gray-100 p-8 shadow-md rounded-md w-2/4">
-                        <div
-                            v-if="closestAndFarthestPoints.closestPoints.length"
-                        >
-                            <h3 class="text-xl font-bold">Closest Point(s):</h3>
-                            <p
+                        <h2 class="font-bold text-xl mb-3">
+                            Closest and Farthest Points
+                        </h2>
+                        <div v-if="props.otherPoints.length === 1">
+                            <p class="text-red-500">
+                                There is only one point in the database.
+                            </p>
+                        </div>
+                        <div v-else>
+                            <div
                                 v-if="
                                     closestAndFarthestPoints.closestPoints
-                                        .length > 1
+                                        .length
                                 "
-                                class="text-red-500"
                             >
-                                These points have the same distance
-                            </p>
-                            <div
-                                v-for="point in closestAndFarthestPoints.closestPoints"
-                                :key="point.id"
-                            >
-                                <p><strong>Name:</strong> {{ point.name }}</p>
-                                <p>
-                                    <strong>X Value:</strong> {{ point.x_val }}
-                                </p>
-                                <p>
-                                    <strong>Y Value:</strong> {{ point.y_val }}
-                                </p>
-                                <p>
-                                    <strong>Distance:</strong>
-                                    {{ point.distance }}
-                                </p>
-                                <br />
+                                <h3 class="text-lg font-bold">
+                                    Closest Points:
+                                </h3>
+                                <div
+                                    v-for="point in closestAndFarthestPoints.closestPoints"
+                                    :key="point.id"
+                                >
+                                    <p>
+                                        <strong>Name:</strong> {{ point.name }}
+                                    </p>
+                                    <p>
+                                        <strong>X Value:</strong>
+                                        {{ point.x_val }}
+                                    </p>
+                                    <p>
+                                        <strong>Y Value:</strong>
+                                        {{ point.y_val }}
+                                    </p>
+
+                                    <p>
+                                        <strong>Distance:</strong>
+                                        {{ point.distance.toFixed(1) }}
+                                    </p>
+
+                                    <br />
+                                </div>
                             </div>
-                        </div>
-                        <div
-                            v-if="
-                                closestAndFarthestPoints.farthestPoints.length
-                            "
-                            class="mt-4"
-                        >
-                            <h3 class="text-xl font-bold">
-                                Farthest Point(s):
-                            </h3>
-                            <p
+                            <div
                                 v-if="
                                     closestAndFarthestPoints.farthestPoints
-                                        .length > 1
+                                        .length
                                 "
-                                class="font-bold text-red-500"
+                                class="mt-4"
                             >
-                                These points have the same distance
-                            </p>
-                            <div
-                                v-for="point in closestAndFarthestPoints.farthestPoints"
-                                :key="point.id"
-                            >
-                                <p><strong>Name:</strong> {{ point.name }}</p>
-                                <p>
-                                    <strong>X Value:</strong> {{ point.x_val }}
-                                </p>
-                                <p>
-                                    <strong>Y Value:</strong> {{ point.y_val }}
-                                </p>
-                                <p>
-                                    <strong>Distance:</strong>
-                                    {{ point.distance }}
-                                </p>
-                                <br />
+                                <h3 class="text-lg font-bold">
+                                    Farthest Points:
+                                </h3>
+                                <div
+                                    v-for="point in closestAndFarthestPoints.farthestPoints"
+                                    :key="point.id"
+                                >
+                                    <p>
+                                        <strong>Name:</strong> {{ point.name }}
+                                    </p>
+                                    <p>
+                                        <strong>X Value:</strong>
+                                        {{ point.x_val }}
+                                    </p>
+                                    <p>
+                                        <strong>Y Value:</strong>
+                                        {{ point.y_val }}
+                                    </p>
+                                    <p>
+                                        <strong>Distance:</strong>
+                                        {{ point.distance.toFixed(1) }}
+                                    </p>
+                                </div>
                             </div>
+                        </div>
+                        <div v-if="areDistancesEqual" class="mt-4">
+                            <p class="text-red-500">
+                                The closest and farthest points are at the same
+                                distance.
+                            </p>
                         </div>
                     </div>
                 </div>
+
                 <div class="flex justify-end mt-6">
                     <button
                         type="button"
